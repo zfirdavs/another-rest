@@ -1,25 +1,33 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
-)
-
-const (
-	port = ":8080"
+	"github.com/joho/godotenv"
+	"github.com/zfirdavs/another-rest/internal/repository"
+	"github.com/zfirdavs/another-rest/internal/route"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+
+	projectID := os.Getenv("FIRESTORE_PROJECT_ID")
+	collectionName := os.Getenv("FIRESTORE_COLLECTON_NAME")
+	serverPort := os.Getenv("SERVER_PORT")
+
+	repo := repository.NewPostRepository(projectID, collectionName)
+	handler := route.NewHandler(repo)
 	router := mux.NewRouter()
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Up and running...")
-	})
+	router.HandleFunc("/posts", handler.GetPosts).Methods("GET")
+	router.HandleFunc("/posts", handler.AddPost).Methods("POST")
 
-	log.Println("Server listening on port", port)
-	log.Fatalln(http.ListenAndServe(port, router))
+	log.Println("Server listening on port", serverPort)
+	log.Fatalln(http.ListenAndServe(serverPort, router))
 
 }
