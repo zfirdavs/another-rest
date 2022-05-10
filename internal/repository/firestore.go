@@ -14,7 +14,7 @@ type repo struct {
 	collectionName string
 }
 
-func NewFirestoreRepository(projectID string, collectionName string) PostRepository {
+func NewFirestoreRepository(projectID, collectionName string) PostRepository {
 	return &repo{projectID, collectionName}
 }
 
