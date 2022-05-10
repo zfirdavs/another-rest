@@ -25,7 +25,7 @@ func main() {
 	handler := controller.NewHandler(s)
 
 	r := router.NewGorillaMux()
-	//
+	// Another implementation of our Router interface
 	// r := router.NewChiMux()
 
 	r.Get("/posts", handler.GetPosts)
