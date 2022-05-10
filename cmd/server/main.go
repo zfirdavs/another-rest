@@ -24,10 +24,12 @@ func main() {
 	s := service.NewPost(repo)
 	handler := controller.NewHandler(s)
 
-	router := router.NewGorillaMux()
+	r := router.NewGorillaMux()
+	//
+	// r := router.NewChiMux()
 
-	router.Get("/posts", handler.GetPosts)
-	router.Post("/posts", handler.AddPost)
+	r.Get("/posts", handler.GetPosts)
+	r.Post("/posts", handler.AddPost)
 
-	router.Serve(serverPort)
+	r.Serve(serverPort)
 }
