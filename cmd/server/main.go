@@ -2,13 +2,13 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/zfirdavs/another-rest/internal/controller"
 	"github.com/zfirdavs/another-rest/internal/repository"
-	"github.com/zfirdavs/another-rest/internal/route"
+	"github.com/zfirdavs/another-rest/internal/service"
+	"github.com/zfirdavs/another-rest/pkg/http/router"
 )
 
 func main() {
@@ -20,14 +20,14 @@ func main() {
 	collectionName := os.Getenv("FIRESTORE_COLLECTON_NAME")
 	serverPort := os.Getenv("SERVER_PORT")
 
-	repo := repository.NewPostRepository(projectID, collectionName)
-	handler := route.NewHandler(repo)
-	router := mux.NewRouter()
+	repo := repository.NewFirestoreRepository(projectID, collectionName)
+	s := service.NewPost(repo)
+	handler := controller.NewHandler(s)
 
-	router.HandleFunc("/posts", handler.GetPosts).Methods("GET")
-	router.HandleFunc("/posts", handler.AddPost).Methods("POST")
+	router := router.NewGorillaMux()
 
-	log.Println("Server listening on port", serverPort)
-	log.Fatalln(http.ListenAndServe(serverPort, router))
+	router.Get("/posts", handler.GetPosts)
+	router.Post("/posts", handler.AddPost)
 
+	router.Serve(serverPort)
 }
