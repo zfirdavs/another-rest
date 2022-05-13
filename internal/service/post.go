@@ -23,15 +23,15 @@ func NewPost(repo repository.PostRepository) PostService {
 	return &service{repo}
 }
 
-func (s *service) Validate(ctx context.Context, post *entity.Post) (err error) {
+func (s *service) Validate(ctx context.Context, post *entity.Post) error {
 	if post == nil {
-		err = errors.New("the post is empty")
+		return errors.New("the post is empty")
 	}
 
 	if post.Title == "" {
-		err = errors.New("the post title is empty")
+		return errors.New("the post title is empty")
 	}
-	return
+	return nil
 }
 
 func (s *service) Create(ctx context.Context, post *entity.Post) error {
