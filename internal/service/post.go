@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"math/rand"
+	"time"
 
 	"github.com/zfirdavs/another-rest/internal/entity"
 	"github.com/zfirdavs/another-rest/internal/repository"
@@ -35,6 +36,7 @@ func (s *service) Validate(ctx context.Context, post *entity.Post) error {
 }
 
 func (s *service) Create(ctx context.Context, post *entity.Post) error {
+	rand.Seed(time.Now().UnixNano())
 	post.ID = rand.Int63()
 	return s.repo.Save(ctx, post)
 }
