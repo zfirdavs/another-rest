@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/zfirdavs/another-rest/internal/entity"
@@ -25,6 +26,7 @@ func NewHandler(service service.PostService) *handler {
 func (h *handler) GetPosts(w http.ResponseWriter, r *http.Request) {
 	posts, err := h.service.FindAll(r.Context())
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(errors.ServiceError{Message: "error getting posts"})
 		return
@@ -55,6 +57,7 @@ func (h *handler) AddPost(w http.ResponseWriter, r *http.Request) {
 
 	err = h.service.Create(ctx, &post)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(errors.ServiceError{Message: "error creating post"})
 		return

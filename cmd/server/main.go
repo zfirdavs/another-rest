@@ -12,15 +12,29 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
+	err := godotenv.Load()
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	projectID := os.Getenv("FIRESTORE_PROJECT_ID")
-	collectionName := os.Getenv("FIRESTORE_COLLECTON_NAME")
+	// projectID := os.Getenv("FIRESTORE_PROJECT_ID")
+	// collectionName := os.Getenv("FIRESTORE_COLLECTON_NAME")
 	serverPort := os.Getenv("SERVER_PORT")
 
-	repo := repository.NewFirestoreRepository(projectID, collectionName)
+	// repo := repository.NewFirestoreRepository(projectID, collectionName)
+	repo := repository.NewSQLiteRepository("posts.db")
+	defer repo.Close()
+
+	err = repo.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = repo.CreatePostsTable()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	s := service.NewPost(repo)
 	handler := controller.NewHandler(s)
 
